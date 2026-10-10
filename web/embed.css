@@ -1,0 +1,261 @@
+:root {
+  --bg: #000;
+  --fg: #e8e2d4;
+  --muted: #8a8173;
+  --red: #c8202a;
+  --red-hot: #ff3b2f;
+  --panel: rgba(0, 0, 0, 0.72);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "VT323", ui-monospace, monospace;
+  overflow: hidden;
+}
+
+#stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+/* Letterbox the 4:3 game inside whatever box the post gives us (usually 16:9). */
+#canvas {
+  display: block;
+  border: 0;
+  padding: 0;
+  aspect-ratio: 4 / 3;
+  height: min(100vh, 75vw);
+  width: auto;
+  background: #000;
+  image-rendering: pixelated;
+  outline: none;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2vh;
+  padding: 16px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(200, 32, 42, 0.45), transparent 60%),
+    var(--panel);
+}
+
+#overlay.gone { display: none; }
+
+h1 {
+  margin: 0;
+  font-size: clamp(40px, 13vh, 110px);
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  color: var(--red);
+  text-shadow: 0 0 18px rgba(255, 59, 47, 0.55), 3px 3px 0 #300;
+}
+
+.tag {
+  margin: 0 0 1vh;
+  font-size: clamp(16px, 4vh, 28px);
+  color: var(--muted);
+}
+
+#loading { width: min(420px, 80%); }
+
+.bar {
+  height: 14px;
+  border: 2px solid var(--muted);
+  padding: 2px;
+}
+
+#bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--red);
+  transition: width 0.15s linear;
+}
+
+#status {
+  margin: 6px 0 0;
+  font-size: clamp(16px, 3.6vh, 24px);
+}
+
+#play {
+  font: inherit;
+  font-size: clamp(22px, 6vh, 40px);
+  padding: 0.25em 0.9em;
+  color: #fff;
+  background: var(--red);
+  border: 3px solid var(--red-hot);
+  box-shadow: 0 0 24px rgba(255, 59, 47, 0.5);
+  cursor: pointer;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+#play:hover, #play:focus-visible { background: var(--red-hot); outline: none; }
+
+@keyframes pulse {
+  50% { box-shadow: 0 0 6px rgba(255, 59, 47, 0.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #play { animation: none; }
+}
+
+#touch-note {
+  max-width: 420px;
+  margin: 0;
+  font-size: clamp(16px, 3.6vh, 22px);
+  color: var(--fg);
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  gap: 2px 14px;
+  margin: 1.5vh 0 0;
+  font-size: clamp(14px, 3.2vh, 20px);
+}
+
+.keys dt { color: var(--red-hot); text-align: right; }
+.keys dd { margin: 0; color: var(--muted); text-align: left; }
+
+@media (max-width: 480px), (max-height: 260px) {
+  .keys { display: none; }
+}
+
+#newtab {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  font-size: 18px;
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  text-decoration: none;
+  z-index: 2;
+}
+
+#newtab:hover { border-color: var(--red-hot); color: #fff; }
+
+/* Already in its own tab: the link is pointless. */
+body.top-level #newtab { display: none; }
+
+/* ---------- Touch controls (shown only on touch devices, see touch.js) ---------- */
+
+.touch-hint { display: none; margin: 0; font-size: clamp(14px, 3.4vh, 20px); color: var(--muted); }
+body.touch .touch-hint { display: block; }
+body.touch .keys { display: none; }
+
+#touch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  --pad: max(10px, 3vmin);
+  --stick: clamp(84px, 34vmin, 170px);
+  --fire: clamp(64px, 24vmin, 120px);
+  --small: clamp(44px, 15vmin, 76px);
+}
+
+#touch[hidden] { display: none; }
+
+#touch, #touch * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+.stick {
+  position: absolute;
+  left: calc(var(--pad) + env(safe-area-inset-left));
+  bottom: calc(var(--pad) + env(safe-area-inset-bottom));
+  width: var(--stick);
+  height: var(--stick);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 40%, rgba(255, 255, 255, 0.12));
+  border: 2px solid rgba(232, 226, 212, 0.35);
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+}
+
+.knob {
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background: rgba(200, 32, 42, 0.6);
+  border: 2px solid rgba(255, 59, 47, 0.8);
+  box-shadow: 0 0 12px rgba(255, 59, 47, 0.4);
+  transition: transform 0.06s linear;
+}
+
+.buttons {
+  position: absolute;
+  right: calc(var(--pad) + env(safe-area-inset-right));
+  bottom: calc(var(--pad) + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas: "weapon use" ". fire";
+  gap: calc(var(--pad) * 0.6);
+  align-items: end;
+  justify-items: end;
+}
+
+.btn {
+  font: inherit;
+  color: var(--fg);
+  border-radius: 50%;
+  border: 2px solid rgba(232, 226, 212, 0.4);
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn.on { background: rgba(200, 32, 42, 0.55); border-color: var(--red-hot); color: #fff; }
+
+.btn.fire {
+  grid-area: fire;
+  width: var(--fire);
+  height: var(--fire);
+  font-size: calc(var(--fire) * 0.22);
+  border-color: rgba(255, 59, 47, 0.7);
+  background: rgba(200, 32, 42, 0.3);
+}
+
+.btn.use, .btn.weapon {
+  width: var(--small);
+  height: var(--small);
+  font-size: calc(var(--small) * 0.26);
+}
+
+.btn.use { grid-area: use; }
+.btn.weapon { grid-area: weapon; }
+
+.btn.menu {
+  position: absolute;
+  top: calc(8px + env(safe-area-inset-top));
+  left: calc(8px + env(safe-area-inset-left));
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 22px;
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>Freedoom no X</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Cpath d='M3 3h10v10H3z' fill='%23c8202a'/%3E%3Cpath d='M6 6h4v4H6z' fill='%23000'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+  <link rel="stylesheet" href="embed.css">
+</head>
+<body>
+  <main id="stage">
+    <!-- The canvas must have no border or padding, or SDL mouse coordinates drift. -->
+    <canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+
+    <div id="overlay">
+      <h1>FREEDOOM</h1>
+      <p class="tag">rodando dentro do post</p>
+
+      <div id="loading">
+        <div class="bar"><div id="bar-fill"></div></div>
+        <p id="status">Baixando o inferno... 0%</p>
+      </div>
+
+      <button id="play" hidden>&#9654; CLIQUE PARA JOGAR</button>
+
+      <p class="touch-hint">Joystick: andar e virar &middot; 13 MB de download</p>
+
+      <dl class="keys">
+        <dt>WASD</dt><dd>andar</dd>
+        <dt>&larr; &rarr;</dt><dd>virar</dd>
+        <dt>ESPAÇO</dt><dd>atirar</dd>
+        <dt>E</dt><dd>usar / abrir</dd>
+        <dt>1-7 / Q</dt><dd>armas</dd>
+        <dt>MOUSE</dt><dd>mirar (clique no jogo)</dd>
+      </dl>
+    </div>
+
+    <div id="touch" hidden>
+      <div class="stick" aria-label="Joystick: andar e virar"><div class="knob"></div></div>
+      <div class="buttons">
+        <button class="btn fire" data-action="fire">ATIRAR</button>
+        <button class="btn use" data-action="use">USAR</button>
+        <button class="btn weapon" data-action="weapon">ARMA</button>
+      </div>
+      <button class="btn menu" data-action="menu" aria-label="Menu">&#9776;</button>
+    </div>
+
+    <a id="newtab" href="embed.html" target="_blank" rel="noopener">Abrir em nova aba &#8599;</a>
+  </main>
+
+  <script type="module" src="embed.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Fetched by `npm run setup` (doom-wasm sources, Emscripten SDK ~1 GB, Freedoom zip)
+vendor/
+
+# Compiler intermediates
+build/obj/
+
+# Vercel CLI link
+.vercel/
+web/.vercel/
+
+node_modules/

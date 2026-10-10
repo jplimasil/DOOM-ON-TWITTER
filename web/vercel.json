@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/doom/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+    },
+    {
+      "source": "/doom/(.*)\\.gz",
+      "headers": [{ "key": "Content-Type", "value": "application/octet-stream" }]
+    },
+    {
+      "source": "/embed.html",
+      "headers": [{ "key": "Permissions-Policy", "value": "fullscreen=*, autoplay=*" }]
+    }
+  ]
+}

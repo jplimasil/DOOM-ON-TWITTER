@@ -1,0 +1,16 @@
+{
+  "name": "freedoom-no-x",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Freedoom (Chocolate Doom em WebAssembly) rodando dentro de um post do X via Player Card.",
+  "license": "GPL-2.0-only",
+  "type": "module",
+  "scripts": {
+    "setup": "node build/setup.mjs",
+    "build": "node build/build.mjs",
+    "rebuild": "node build/build.mjs --clean",
+    "serve": "npx --yes serve web -l 8787",
+    "set-url": "node build/set-url.mjs",
+    "deploy": "npx --yes vercel deploy web --prod"
+  }
+}

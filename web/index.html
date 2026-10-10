@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Freedoom no X</title>
+  <meta name="description" content="DOOM (Freedoom) rodando inteiro dentro de um post. Clique e jogue.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Cpath d='M3 3h10v10H3z' fill='%23c8202a'/%3E%3Cpath d='M6 6h4v4H6z' fill='%23000'/%3E%3C/svg%3E">
+
+  <!-- X / Twitter Player Card. Absolute URLs are filled in by: node build/set-url.mjs <url> <@handle> -->
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:site" content="@JaoScript_">
+  <meta name="twitter:title" content="Freedoom: jogue dentro do post">
+  <meta name="twitter:description" content="DOOM rodando inteiro dentro do X. Clique no play.">
+  <meta name="twitter:image" content="https://SEU-PROJETO.vercel.app/thumb.png">
+  <meta name="twitter:image:alt" content="Cena do Freedoom com o texto: rodando dentro do post">
+  <meta name="twitter:player" content="https://SEU-PROJETO.vercel.app/embed.html">
+  <meta name="twitter:player:width" content="1280">
+  <meta name="twitter:player:height" content="720">
+
+  <!-- Open Graph (Discord, WhatsApp, Telegram...) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Freedoom: jogue dentro do post">
+  <meta property="og:description" content="DOOM rodando inteiro no navegador. Clique e jogue.">
+  <meta property="og:url" content="https://SEU-PROJETO.vercel.app/">
+  <meta property="og:image" content="https://SEU-PROJETO.vercel.app/thumb.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+  <style>
+    :root { --bg: #0a0a0a; --fg: #e8e2d4; --muted: #8a8173; --red: #c8202a; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font-family: "VT323", ui-monospace, monospace; font-size: 20px; }
+    main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 40px; }
+    h1 { margin: 0; color: var(--red); font-size: clamp(44px, 9vw, 84px); letter-spacing: 0.05em; text-shadow: 0 0 18px rgba(255, 59, 47, 0.5); }
+    .sub { margin: 0 0 18px; color: var(--muted); font-size: 24px; }
+    .frame { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 2px solid #2a2622; background: #000; }
+    .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    footer { margin-top: 18px; color: var(--muted); line-height: 1.4; }
+    a { color: var(--fg); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>FREEDOOM</h1>
+    <p class="sub">O DOOM inteiro rodando no navegador, também dentro de um post no X.</p>
+    <div class="frame">
+      <iframe src="embed.html" title="Freedoom" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+    <footer>
+      Motor: <a href="https://github.com/chocolate-doom/chocolate-doom">Chocolate Doom</a> via
+      <a href="https://github.com/cloudflare/doom-wasm">doom-wasm</a> (GPL-2.0).
+      Mapas e gráficos: <a href="https://freedoom.github.io/">Freedoom</a> (BSD).
+      Projeto de fã, sem afiliação com id Software ou Bethesda.
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,109 @@
+diff --git a/opl/opl.c b/opl/opl.c
+index a1aa1d9..e6e71b7 100644
+--- a/opl/opl.c
++++ b/opl/opl.c
+@@ -471,6 +471,36 @@ static void DelayCallback(void *_delay_data)
+     SDL_UnlockMutex(delay_data->mutex);
+ }
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++
++// In the browser the audio callback that fires DelayCallback runs on this same
++// thread, so blocking on the condition variable would freeze the page forever.
++// Yield to the event loop instead, and give up if audio is not running.
++// delay_data is static so a late callback never writes to a dead stack frame.
++void OPL_Delay(uint64_t us)
++{
++    static delay_data_t delay_data;
++    int waited_ms = 0;
++
++    if (driver == NULL)
++    {
++        return;
++    }
++
++    delay_data.finished = 0;
++    delay_data.mutex = NULL;
++    delay_data.cond = NULL;
++
++    OPL_SetCallback(us, DelayCallback, &delay_data);
++
++    while (!delay_data.finished && waited_ms < 250)
++    {
++        emscripten_sleep(1);
++        ++waited_ms;
++    }
++}
++#else
+ void OPL_Delay(uint64_t us)
+ {
+     delay_data_t delay_data;
+@@ -505,6 +535,7 @@ void OPL_Delay(uint64_t us)
+     SDL_DestroyMutex(delay_data.mutex);
+     SDL_DestroyCond(delay_data.cond);
+ }
++#endif
+ 
+ void OPL_SetPaused(int paused)
+ {
+diff --git a/src/doom/m_menu.c b/src/doom/m_menu.c
+index 0da4869..63ba323 100644
+--- a/src/doom/m_menu.c
++++ b/src/doom/m_menu.c
+@@ -1852,8 +1852,16 @@ boolean M_Responder (event_t* ev)
+     // Keyboard shortcut?
+     // Vanilla Doom has a weird behavior where it jumps to the scroll bars
+     // when the certain keys are pressed, so emulate this.
+-
+-    else if (ch != 0 || IsNullKey(key))
++    //
++    // Skip it for keys bound to game controls (WASD, E, Q...): the touch
++    // controls send them alongside the menu keys, and 'S' jumping to
++    // "Save Game" or 'E' to "Event Horizon" picks the wrong item.
++
++    else if ((ch != 0 || IsNullKey(key))
++             && key != key_up && key != key_down
++             && key != key_strafeleft && key != key_straferight
++             && key != key_use && key != key_fire
++             && key != key_nextweapon && key != key_prevweapon)
+     {
+ 	for (i = itemOn+1;i < currentMenu->numitems;i++)
+         {
+diff --git a/src/doomtype.h b/src/doomtype.h
+index 9947a07..e876965 100644
+--- a/src/doomtype.h
++++ b/src/doomtype.h
+@@ -100,12 +100,20 @@
+ 
+ #include <inttypes.h>
+ 
+-#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
++#if defined(__cplusplus)
+ 
+ // Use builtin bool type with C++.
+ 
+ typedef bool boolean;
+ 
++#elif defined(__bool_true_false_are_defined)
++
++// <stdbool.h> was already included (newer Emscripten headers pull it in).
++// Keep boolean 4 bytes wide like the enum below, or files disagree on the
++// layout of boolean arrays/structs and overwrite each other's memory.
++
++typedef int boolean;
++
+ #else
+ 
+ typedef enum 
+@@ -116,6 +124,10 @@ typedef enum
+ 
+ #endif
+ 
++#ifndef __cplusplus
++_Static_assert(sizeof(boolean) == 4, "boolean must be the same size in every file");
++#endif
++
+ typedef uint8_t byte;
+ typedef uint8_t pixel_t;
+ typedef int16_t dpixel_t;
